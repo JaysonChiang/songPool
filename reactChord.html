@@ -1,0 +1,135 @@
+<html>
+<head>
+	<title></title>
+	<style>
+	.lyric strong {
+	  left: -4px;
+	  position: absolute;
+	  top: -2em;
+	}
+	.lyric strong em {
+		white-space: nowrap;
+		padding-right: 15px;
+	}
+	.lyric{
+		position:relative;
+		line-height: 3;
+	}
+	</style>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+</head>
+<body>
+<div id="myApp"></div>
+<script  type="text/jsx">
+/*
+I want to go [G]back to my little grass shack
+In Kealakekua, [A7]Hawaii
+I want to [D7]be with all the kanes and wahines
+That I used to [G]know... so long ago
+I can [B7]hear the old guitars a-playing[E7]
+On the beach at Honaunau
+I can [A7]hear the old Hawaiians saying
+"Komo [D7]mai no kaua i ka hale welakahau"
+*/
+var Chord = React.createClass({
+	render:function(){
+
+		var chardArray = this.props.name.split(',');
+		return (
+				<strong>
+					{chardArray.map(function(chord){
+						return <em>{chord}</em>
+					})}
+				</strong>
+		);
+	}
+});
+
+var Output = React.createClass({
+	render:function(){
+
+		var rawText  = this.props.output;
+
+		var rawText = rawText.replace(/\n/g, '__$__');
+
+		var rawText = rawText.replace(/\]\s*\[/g,',').replace(/ /g, "\u00a0");
+
+		var rawArray = rawText.split(/\[|__\$__/g);
+
+		var chordArray = rawArray.map(function(value){
+			var closeBucket = value.indexOf(']');
+			return value.substring(0, closeBucket);
+		});
+
+		var lyricArray = rawArray.map(function(value){
+			var closeBucket = value.indexOf(']');
+			var willremove = value.substring(0, closeBucket + 1);
+			return value.replace(willremove,"");
+		});
+
+		var isBr = function(idx){
+			var br = "";
+			if(idx>0){
+				if (chordArray[idx]==="") {
+					br = <br />;
+				}
+			}
+			return br;
+		};
+
+		return (
+			<div>{lyricArray.map(function(lyric,idx){
+					return (
+						<span  className='lyric'>
+							{isBr(idx)}
+							<Chord name={chordArray[idx]} />
+							{lyric}
+						</span>
+					);
+				})}
+			</div>
+		);
+	}
+});
+
+var MyApp = React.createClass({
+	getInitialState: function() {
+		return {
+			raw:""
+		};
+	},
+    handleChange: function() {
+
+        var myText = React.findDOMNode(this.refs.typezone).value;
+
+        this.setState({raw: myText});
+    },
+    render: function() {
+  	    var divStyle = {
+		    width:'350px',
+		    height:'640px',
+		    float: 'left'
+	    };
+	    return (
+	      <div>
+	          <div style={divStyle}>
+	            <Output output={this.state.raw} />
+	          </div>
+	          <textarea ref="typezone" 
+	              style={divStyle} 
+	              onChange={this.handleChange}>
+	          </textarea>
+	      </div>
+	    );
+    }
+});
+
+React.render(
+  <MyApp />,
+  document.getElementById('myApp')
+);
+
+</script>
+</body>
+</html>

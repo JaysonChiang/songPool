@@ -1,0 +1,85 @@
+<html>
+<head>
+	<title></title>
+	<link type="text/css" rel="stylesheet" href="http://jtab.tardate.com/css/jtab-helper.css"/>
+</head>
+<body>
+
+	<div class="jtab"> E / / / | Am / B / || </div>
+	<div>歌詞唱唱</div>
+
+	<div class="mytab">[E]歌詞唱唱[Am]</div>
+	<div id="display" style="float:left;width:300px;height:500"></div>
+	<textarea id="editor" style="float:left;width:300px;height:500">jayson[Am] Hello my [Am] Jasmine
+	</textarea>
+
+
+
+  <script src="http://jtab.tardate.com/javascripts/jquery.js" type="text/javascript"></script>
+  <script src="http://jtab.tardate.com/javascripts/raphael.js" type="text/javascript"></script>
+  <script src="http://jtab.tardate.com/javascripts/jtab.js" type="text/javascript"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/0.5.0/showdown.min.js"></script>
+
+  <script type="text/javascript">
+
+var APP = (function(){
+	var line;
+	return {
+		set:function(inputText){
+			line = inputText;
+		},
+		get:function(){
+			return line;
+		},
+		getBucket:function(){
+			var idxStart = line.indexOf('[');
+			var idxEnd = line.indexOf(']')+1;
+			return line.substring(idxStart,idxEnd);
+		},
+		getBucketWords:function(){
+			var idxStart = line.indexOf('[')+1;
+			var idxEnd = line.indexOf(']');
+			return line.substring(idxStart,idxEnd);
+		},
+		getBucketIndex:function(){
+			return idxStart = line.indexOf('[');
+		},
+		removeBucketWords:function(){
+			return line.replace(this.getBucketWords(),"");
+		},
+		removeBucket:function(){
+			return line.replace(this.getBucket(),"");
+		}
+	} 
+}());
+
+
+var text = $('#editor').val();
+APP.set(text);
+console.log(APP.get());
+console.log(APP.getBucket());
+console.log(APP.removeBucket());
+
+
+var myText = APP.removeBucketWords().split('[]');
+
+
+$('#display').text(APP.removeBucket());
+
+	</script>
+
+	<script type="text/javascript">
+	 //   jtab.render($('#mytab'),'Am7      C ||');
+//
+
+	    var text = "test *ABC* 123 ";
+
+	    var converter = new Showdown.converter();
+        console.log(converter);
+	    var tree = converter.makeHtml( text );
+       // refs = tree[ 1 ].references;
+       console.log(tree);
+        $('.mytab').html(tree);
+	</script>
+</body>
+</html>
