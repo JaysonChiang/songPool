@@ -15,9 +15,13 @@
 		position:relative;
 		line-height: 3;
 	}
+	.errorChord{
+		color:red;
+	}
 	</style>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/react.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.13.3/JSXTransformer.js"></script>
+	<script src="./ukeGeeks.transpose.js"></script>
 </head>
 <body>
 <div id="myApp"></div>
@@ -36,10 +40,29 @@ var Chord = React.createClass({
 	render:function(){
 
 		var chardArray = this.props.name.split(',');
+		var _regEx = {
+		    safe: /^([A-G][#b]?)(m|m6|7|m7|dim|maj7|6|sus2|sus4|aug|9)?$/
+	    };
+	    
+		var safeChord = function(chord){
+
+			var sc = "";
+			var rawChord = chord.trim();
+			var safeChord = "";
+
+            if(_regEx.safe.test(rawChord)){
+				var newChord = transpose.shift(rawChord, 0);
+				sc = newChord;
+            }else{
+            	sc = <span className='errorChord'>{rawChord}</span>;
+            }
+            return sc;
+		}
+
 		return (
 				<strong>
 					{chardArray.map(function(chord){
-						return <em>{chord}</em>
+						return <em>{safeChord(chord)}</em>;
 					})}
 				</strong>
 		);
@@ -57,9 +80,11 @@ var Output = React.createClass({
 
 		var rawArray = rawText.split(/\[|__\$__/g);
 
+       
 		var chordArray = rawArray.map(function(value){
 			var closeBucket = value.indexOf(']');
-			return value.substring(0, closeBucket);
+			var rawChord = value.substring(0, closeBucket);
+			return rawChord;
 		});
 
 		var lyricArray = rawArray.map(function(value){
